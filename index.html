@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Search</title>
+    <!-- Link to Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .card-custom {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4 text-center">Country Search</h1>
+        <!-- Search Bar and Button -->
+        <div class="input-group mb-3">
+            <input type="text" id="searchBar" class="form-control" placeholder="Enter country name" onkeydown="handleKeyDown(event)">
+            <div class="input-group-append">
+                <button class="btn btn-primary" onclick="searchCountry()">Search</button>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div id="result"></div>
+    </div>
+
+    <!-- Link to Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Function to handle 'Enter' key press
+        function handleKeyDown(event) {
+            if (event.key === 'Enter') {
+                searchCountry(); // Trigger search when Enter is pressed
+            }
+        }
+
+        function searchCountry() {
+            const searchBar = document.getElementById('searchBar');
+            const searchQuery = searchBar.value;
+            
+            // Clear the input field and reset placeholder
+            searchBar.value = '';
+            searchBar.placeholder = 'Enter country to get details';
+
+            if (searchQuery.length > 0) {
+                fetch(`backend.php?country=${searchQuery}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data) {
+                            document.getElementById('result').innerHTML = 
+                                `<div class="card card-custom">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${data.name}</h5>
+                                        <p class="card-text"><strong>Population:</strong> ${data.population}</p>
+                                        <p class="card-text"><strong>Capital:</strong> ${data.capital}</p>
+                                    </div>
+                                </div>`;
+                        } else {
+                            document.getElementById('result').innerHTML = 
+                                '<div class="alert alert-danger" role="alert">No results found.</div>';
+                        }
+                    });
+            } else {
+                document.getElementById('result').innerHTML = '';
+            }
+        }
+    </script>
+</body>
+</html>
